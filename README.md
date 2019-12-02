@@ -1,7 +1,7 @@
 MC Houdini Tools
 ======
 
-![maximcapra logo](https://github.com/maximcapra/houdini_tools/blob/master/logo.png)
+![maximcapra logo](https://github.com/maximcapra/houdini_tools/logo.png)
 
 HDAs, Scripts, Shelf Tools and Experiments for SideFX Houdini.
 
