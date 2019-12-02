@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+  <!-- This file contains definitions of shelves, toolbars, and tools.
+ It should not be hand-edited when it is being used by the application.
+ Note, that two definitions of the same element are not allowed in
+ a single file. -->
+
+  <toolshelf name="mc" label="maximcapra">
+    <memberTool name="aecam"/>
+    <memberTool name="AE2Cam"/>
+    <memberTool name="aecorner"/>
+    <memberTool name="aepos"/>
+    <memberTool name="SepByAttrib"/>
+    <memberTool name="openproject"/>
+  </toolshelf>
+
+  <tool name="aecam" label="AE Cam Import" icon="ROP_mantra">
+    <script scriptType="python"><![CDATA[import hou
+import os
+
+
+h = hou.node("/obj/cam1")
+filename = os.path.dirname(hou.hipFile.path())+"/cam.txt"
+
+
+state = "crap"
+ignoreLine = False
+
+with open (filename,"rU") as ff:
+        for theLine in ff:
+                elements = theLine.strip().split("\t")
+                ignoreLine = False
+                if len(elements) == 0:
+                        state = "crap"
+                        ignoreLine = True
+                else:
+                        if elements.count("X degrees") > 0:
+                                state = "orientation"
+                                ignoreLine = True
+                        if elements.count("X pixels") > 0:
+                                state = "translate"
+                                ignoreLine = True
+
+                        if ignoreLine == False:
+                                if len(elements) == 4:
+                                        theFrame = elements[0]
+                                        theXValue = elements[1]
+                                        theYValue = elements[2]
+                                        theZValue = elements[3]
+                                if state == "translate":
+                                        print ("At frame "+theFrame+" translate to: "+theXValue)
+                                        setKey = hou.Keyframe()
+                                        setKey.setFrame(int(theFrame))
+                                        setKey.setValue(float(theXValue)*0.01)
+                                        testCh = h.parm("tx")
+                                        testCh.setKeyframe(setKey)
+                                        
+                                        setKey = hou.Keyframe()
+                                        setKey.setFrame(int(theFrame))
+                                        setKey.setValue(-float(theYValue)*0.01)
+                                        testCh = h.parm("ty")
+                                        testCh.setKeyframe(setKey)
+                                        
+                                        setKey = hou.Keyframe()
+                                        setKey.setFrame(int(theFrame))
+                                        setKey.setValue(-float(theZValue)*0.01)
+                                        testCh = h.parm("tz")
+                                        testCh.setKeyframe(setKey)
+                                        
+                                        
+                                        
+                                if state == "orientation":
+                                        print ("At frame "+theFrame+" orient to: "+theXValue)
+                                        
+                                        setKey = hou.Keyframe()
+                                        setKey.setFrame(int(theFrame))
+                                        setKey.setValue(float(theXValue))
+                                        testCh = h.parm("rx")
+                                        testCh.setKeyframe(setKey)
+                                        
+                                        setKey = hou.Keyframe()
+                                        setKey.setFrame(int(theFrame))
+                                        setKey.setValue(-float(theYValue))
+                                        testCh = h.parm("ry")
+                                        testCh.setKeyframe(setKey)
+                                        
+                                        setKey = hou.Keyframe()
+                                        setKey.setFrame(int(theFrame))
+                                        setKey.setValue(-float(theZValue))
+                                        testCh = h.parm("rz")
+                                        testCh.setKeyframe(setKey)]]></script>
+  </tool>
+
+  <tool name="aecorner" label="AE Corner Import" icon="SOP_grid">
+    <script scriptType="python"><![CDATA[import hou
+import os
+
+
+h = hou.node("/obj/corner")
+filename = os.path.dirname(hou.hipFile.path())+"/corner.txt"
+
+
+state = "crap"
+ignoreLine = False
+
+with open (filename,"rU") as ff:
+    for theLine in ff:
+        elements = theLine.strip().split()
+        ignoreLine = False
+        if len(elements) == 0:
+            state = "crap"
+            ignoreLine = True
+        else:
+            if elements.count("Upper") > 0 and elements.count("Left") > 0:
+                print("UPPER LEFT")
+                state = "ul"
+                ignoreLine = True
+            if elements.count("Upper") > 0 and elements.count("Right") > 0:
+                print("UPPER RIGHT")            
+                state = "ur"
+                ignoreLine = True
+            if elements.count("Lower") > 0 and elements.count("Left") > 0:
+                print("LOWER LEFT")            
+                state = "ll"
+                ignoreLine = True
+            if elements.count("Lower") > 0 and elements.count("Right") > 0:
+                print("LOWER RIGHT")            
+                state = "lr"
+                ignoreLine = True
+                    
+            if ignoreLine == False:
+                if len(elements) == 3 and elements[0].isdigit() == 1:
+                    theFrame = elements[0]
+                    theXValue = elements[1]
+                    theYValue = elements[2]
+                    if state == "ul":
+                        print(elements)
+                        setKey = hou.Keyframe()
+                        setKey.setFrame(int(theFrame))
+                        setKey.setValue(float(theXValue))
+                        testCh = h.parm("ulx")
+                        testCh.setKeyframe(setKey)
+                        
+                        setKey = hou.Keyframe()
+                        setKey.setFrame(int(theFrame))
+                        setKey.setValue(float(theYValue))
+                        testCh = h.parm("uly")
+                        testCh.setKeyframe(setKey)
+                    if state == "ur":
+                        print(elements)
+                        setKey = hou.Keyframe()
+                        setKey.setFrame(int(theFrame))
+                        setKey.setValue(float(theXValue))
+                        testCh = h.parm("urx")
+                        testCh.setKeyframe(setKey)
+                        
+                        setKey = hou.Keyframe()
+                        setKey.setFrame(int(theFrame))
+                        setKey.setValue(float(theYValue))
+                        testCh = h.parm("ury")
+                        testCh.setKeyframe(setKey)
+                    if state == "ll":
+                        print(elements)
+                        setKey = hou.Keyframe()
+                        setKey.setFrame(int(theFrame))
+                        setKey.setValue(float(theXValue))
+                        testCh = h.parm("llx")
+                        testCh.setKeyframe(setKey)
+                        
+                        setKey = hou.Keyframe()
+                        setKey.setFrame(int(theFrame))
+                        setKey.setValue(float(theYValue))
+                        testCh = h.parm("lly")
+                        testCh.setKeyframe(setKey)
+                    if state == "lr":
+                        print(elements)
+                        setKey = hou.Keyframe()
+                        setKey.setFrame(int(theFrame))
+                        setKey.setValue(float(theXValue))
+                        testCh = h.parm("lrx")
+                        testCh.setKeyframe(setKey)
+                        
+                        setKey = hou.Keyframe()
+                        setKey.setFrame(int(theFrame))
+                        setKey.setValue(float(theYValue))
+                        testCh = h.parm("lry")
+                        testCh.setKeyframe(setKey)
+                        ]]></script>
+  </tool>
+
+  <tool name="aepos" label="AE Position Import" icon="SOP_xform">
+    <script scriptType="python"><![CDATA[import hou
+import os
+
+
+h = hou.node("/obj/position")
+filename = os.path.dirname(hou.hipFile.path())+"/position.txt"
+
+
+state = "crap"
+ignoreLine = False
+
+with open (filename,"rU") as ff:
+    for theLine in ff:
+        elements = theLine.strip().split()
+        ignoreLine = False
+        if len(elements) == 0:
+            state = "crap"
+            ignoreLine = True
+        else:
+            if elements.count("Track") > 0 and elements.count("Point") > 0:
+                print("POSITION")
+                state = "pos"
+                ignoreLine = True
+                    
+            if ignoreLine == False:
+                if len(elements) == 3 and elements[0].isdigit() == 1:
+                    theFrame = elements[0]
+                    theXValue = elements[1]
+                    theYValue = elements[2]
+                    if state == "pos":
+                        print(elements)
+                        setKey = hou.Keyframe()
+                        setKey.setFrame(int(theFrame))
+                        setKey.setValue(float(theXValue))
+                        testCh = h.parm("positionx")
+                        testCh.setKeyframe(setKey)
+                        
+                        setKey = hou.Keyframe()
+                        setKey.setFrame(int(theFrame))
+                        setKey.setValue(float(theYValue))
+                        testCh = h.parm("positiony")
+                        testCh.setKeyframe(setKey)
+                        ]]></script>
+  </tool>
+
+  <tool name="SepByAttrib" label="Separate by Attrib" icon="SOP_split">
+    <script scriptType="python"><![CDATA[import hou
+
+selectedNode = hou.selectedNodes()
+
+for node in hou.selectedNodes():
+    groups = node.geometry().primGroups()
+    for group in groups:
+        containerNode = hou.node('/obj/roman_reduction/FBX_collection')
+        geoNode = containerNode.createNode('geo')
+        geoNode.setName(''+group.name())
+        mergeNode = geoNode.createNode('object_merge')
+        mergeNode.setName(''+group.name())
+        mergeNode.parm('objpath1').set(node.path())
+        mergeNode.parm('group1').set(group.name())
+]]></script>
+  </tool>
+
+  <tool name="openproject" label="Open Project" icon="SOP_file">
+    <script scriptType="python"><![CDATA[import os
+import hou
+import subprocess
+
+current_file_path = hou.hipFile.path()
+
+current_file_path = os.path.dirname(current_file_path)
+fpArray = current_file_path.split('/')
+#fpArray = fpArray[:-1]
+#fpOut = '/'.join(fpArray) + ""
+subprocess.Popen('explorer %s' % os.path.normpath(current_file_path))       
+#print(current_file_path)
+
+#>>> file_to_show = "/Applications/iTunes.app"
+#>>> subprocess.call(["open", "-R", file_to_show])]]></script>
+  </tool>
+
+  <tool name="AE2Cam" label="AE Cam Export" icon="ROP_mantra">
+    <script scriptType="python"><![CDATA[#  Select a camera (or camera switcher) and press the button.
+#  This script generates keyframe data for Position / Orientation / Zoom and copies it the system clipboard.
+
+import hou
+
+theNodes = hou.selectedNodes()
+h = theNodes[0]
+
+startFrame = int(hou.playbar.frameRange()[0])
+endFrame = int(hou.playbar.frameRange()[1])
+scale = 100.0
+
+myOutputString = "Adobe After Effects 8.0 Keyframe Data\n\n"
+myOutputString = myOutputString + "\tUnits Per Second\t25\n"
+myOutputString = myOutputString + "\tSource Width\t1920\n"
+myOutputString = myOutputString + "\tSource Height\t1080\n"
+myOutputString = myOutputString + "\tSource Pixel Aspect Ratio\t1\n"
+myOutputString = myOutputString + "\tComp Pixel Aspect Ratio\t1\n"
+   
+
+
+
+    # do the orientation:
+    
+myOutputString = myOutputString + "\nTransform\tOrientation\n"
+myOutputString = myOutputString + "\tFrame\tX degrees\t\n"
+  
+for theFrame in range (startFrame,endFrame+1):
+    x = h.worldTransformAtTime(hou.frameToTime(theFrame))
+    xform = x.extractRotates('srt','zyx',hou.Vector3())
+    myOutputString = myOutputString + "\t"+str(theFrame)+"\t"+str(xform[0])+"\t"+str(-xform[1])+"\t"+str(-xform[2])+"\n"
+
+    
+    # do the positions:
+    
+myOutputString = myOutputString + "\nTransform\tPosition\n"
+myOutputString = myOutputString + "\tFrame\tX pixels\tY pixels\tZ pixels\n"
+     
+for theFrame in range (startFrame,endFrame+1):
+    x = h.worldTransformAtTime(hou.frameToTime(theFrame))
+    xform = x.extractTranslates('srt')
+    myOutputString = myOutputString + "\t"+str(theFrame)+"\t"+str(xform[0]*scale)+"\t"+str(-xform[1]*scale)+"\t"+str(-xform[2]*scale)+"\n"
+    
+    
+    # do the zoom:
+    
+myOutputString = myOutputString + "\nCamera Options\tZoom\n"
+myOutputString = myOutputString + "\tFrame\tpixels\n"
+     
+for theFrame in range (startFrame,endFrame+1):
+    foc = h.parm("focal").evalAsFloatAtFrame(theFrame)
+    ape = h.parm("aperture").evalAsFloatAtFrame(theFrame)
+    wid = h.parm("resx").evalAsIntAtFrame(theFrame)
+    
+        # After Effects uses zoom, rather than focal length:
+    
+    zoom = (foc * wid) / ape
+    myOutputString = myOutputString + "\t"+str(theFrame)+"\t"+str(zoom)+"\n"
+    
+    
+    
+
+myOutputString = myOutputString + "\n\nEnd of Keyframe Data\n"
+
+
+hou.ui.copyTextToClipboard(myOutputString)]]></script>
+  </tool>
+</shelfDocument>
