@@ -1,0 +1,9 @@
+{
+	"env": [
+		{
+			"MC": "C:/path/to/houdini_tools"
+		},
+	],
+	"path": "$MC"
+	
+}
