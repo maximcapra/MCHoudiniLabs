@@ -1,4 +1,4 @@
-MC Houdini Tools
+MC Labs - Houdini Tools
 ======
 
 ![maximcapra logo](https://github.com/maximcapra/houdini_tools/blob/master/logo.png)
